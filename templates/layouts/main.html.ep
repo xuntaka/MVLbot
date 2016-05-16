@@ -1,0 +1,167 @@
+<%
+my $menu = [
+  {
+    'url'   => 'main',
+    'title' => '<i class="fa fa-check-square-o fa-fw"></i> Проекты',
+  },
+];
+%>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Pagetester Scheduler<%= title && ' — ' . title %></title>
+
+  <!-- Bootstrap Core CSS -->
+  <link href="/s/theme/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- MetisMenu CSS -->
+  <link href="/s/theme/bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link href="/s/theme/dist/css/sb-admin-2.css" rel="stylesheet">
+
+  <link href="/s/css/main.css" rel="stylesheet">
+
+  <!-- Custom Fonts -->
+  <link href="/s/theme/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  % foreach (@{css||[]}) {
+  <link href="<%= $_ . '?' . config->{'release_version'} %>" rel="stylesheet">
+  % }
+  % foreach (@{js||[]}) {
+  <script src="<%= $_ . '?' . config->{'release_version'} %>"></script>
+  % }
+  <script>
+    var gData = <%== js_config =%>;
+  </script>
+</head>
+
+<body>
+
+  <div id="wrapper">
+
+    <!-- Navigation -->
+    <header>
+      <nav class="navbar" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="<%= url_for 'main' %>">Pagetester Scheduler</a>
+        </div>
+        <!-- /.navbar-header -->
+
+        <ul class="nav navbar-top-links navbar-left">
+        % foreach (@$menu) {
+          <li><a class="<%== 'active' if location =~ /^$_->{'url'}$/ %>" href="<%= url_for $_->{'url'} %>"><%== $_->{'title'} %></a></li>
+        % }
+        </ul>
+
+        <ul class="nav navbar-top-links navbar-right">
+          <li><a href="#"><i class="fa fa-money fa-fw"></i> <%== money(user->money, 'int' => 0) %></a>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="fa fa-user fa-fw"></i> <%= user->name %> <i class="fa fa-caret-down"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+              <li><a href="<%= url_for('profile') %>"><i class="fa fa-user fa-fw"></i> User Profile</a>
+              </li>
+              <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+              </li>
+              <li class="divider"></li>
+              <li><a href="<%= url_for('logout') %>"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+              </li>
+            </ul>
+            <!-- /.dropdown-user -->
+          </li>
+          <!-- /.dropdown -->
+        </ul>
+        <!-- /.navbar-top-links -->
+
+      </nav>
+    </header>
+
+    <div class="page-header">
+      <div class="page-header-wrapper">
+        <h1><%= title %></h1>
+        <div class="page-header-buttons"><%== stash('title-buttons') %></div>
+      </div>
+    </div>
+
+    <!-- Page Content -->
+    <div id="page-wrapper">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-12">
+            % if (my $flash = flash('message')) {
+            <div class="alert alert-<%= $flash->[0] %>">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              <strong><%= ucfirst $flash->[0] %>!</strong> <%== $flash->[1] %>
+            </div>
+            % }
+            % if (my $err = errors->first_on(qw[form error])) {
+            <div class="alert alert-danger">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              <strong>Ошибка!</strong> <%= $err %>
+            </div>
+            % }
+            %== content
+          </div>
+          <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+    <!-- /#page-wrapper -->
+
+  </div>
+  <!-- /#wrapper -->
+
+  <!-- jQuery -->
+  <script src="/s/jquery/jquery-2.1.3.min.js"></script>
+  <script src="/s/jquery/ui/js/jquery-ui.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="/s/theme/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+  <!-- Metis Menu Plugin JavaScript -->
+  <script src="/s/theme/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+
+  <!-- Custom Theme JavaScript -->
+  <script src="/s/js/main.js"></script>
+
+  % foreach (@{js_end||[]}) {
+  <script src="<%= $_ . '?' . config->{'release_version'} %>"></script>
+  % }
+
+  % if (my $jss = js_on_ready) {
+  <script>//<![CDATA[
+  "use strict";
+  $(function() {
+    %  foreach (@$jss) {
+      %== $_->()
+    % }
+  });
+  //]]></script>
+  % }
+</body>
+
+</html>

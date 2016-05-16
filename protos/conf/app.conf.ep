@@ -1,0 +1,84 @@
+% $config->{db}{host} ||= 'localhost';
+% my $dsn_params = $config->{db}{mysql_read_default_file} ? ';mysql_read_default_file='.$config->{db}{mysql_read_default_file} : '';
+% $config->{https} = {on => $config->{https}} unless ref $config->{https};
+% my $reply_to = $config->{'mail'}->{'from'} || 'noreply@' . $config->{'domain'};
+% $reply_to =~ s/.*<(.*)>.*/$1/;
+% $reply_to = 'support@' . $config->{'domain'}; # временно все ответы принимаем на support@
+{
+	'mode' => '<%= $config->{'mode'} || 'production' %>',
+	'release_timestamp' => time(),
+	'release_version' => '<%= $config->{release_version} %>',
+	'server' => {
+		'www'    => 'http://<%= $config->{domain} %>',
+		'https'  => '<%= $config->{https}{on} ? 'https' : 'http' %>://<%= $config->{domain} %>',
+		'host'   => '<%= $config->{domain} %>',
+		'domain' => '<%= $config->{domain} %>', # тут лучше использовать host, вроде нигде не используется, но пока пусть висит
+		'port'   => '<%= $config->{port  } %>',
+	},
+	'https' => {
+		'on'          => '<%= $config->{https}{on} || '' %>',
+		'force_admin' => '<%= defined $config->{https}{force_admin} ? $config->{https}{force_admin} : $config->{https}{on} || '' %>',
+	},
+	'cookie' => {
+		'domain' => '.<%= $config->{domain} %>',
+		'name'   => 'mvlbot',
+	},
+	'mail' => {
+		'from'    => '<%= $config->{'mail'}->{'from'} || 'MVLBot <noreply@' . $config->{'domain'} . '>' %>',
+		'reply_to' => '<%= $reply_to %>',
+		% if ($config->{'mail'}->{'to'}) {
+		'to'      => '<%= $config->{'mail'}->{'to'} %>',
+		% }
+		% if ($config->{'mail'}->{'bcc'}) {
+		'bcc'     => '<%= $config->{'mail'}->{'bcc'} || '' %>',
+		% }
+		'type'    => 'text/html',
+		'how'     => '<%= $config->{'mail'}->{'how'} || 'sendmail' %>',
+		'howargs' => <%= $config->{'mail'}->{'howargs'} || '[]' %>,
+	},
+	'auth' => {
+		'expires' => 60*60*24*30,
+	},
+	'log' => {
+		'dbic' => {
+			'on'   => '<%= $config->{'dbic_log_on'} || $config->{'mode'} && $config->{'mode'} eq 'development' || 0 %>',
+			'file' => '<%= $approot %>/log/dbic.log',
+			},
+	},
+	'db' => {
+		'drivername'           => 'Pg',
+			'user'                 => '<%= $config->{'db'}->{'user'} %>',
+			'password'             => '<%= $config->{'db'}->{'password'} %>',
+			'datasource'           => {
+				'database' => '<%= $config->{'db'}->{'database'} %>',
+				'host'     => '<%= $config->{'db'}->{'host'} %>',
+				'port'     => '<%= $config->{'db'}->{'port'} %>',
+		},
+	},
+	'cache' => {
+		'class' => 'Cache::Memcached::Fast',
+		'settings' => {
+			'servers' => <%= $config->{cache}{servers} || "['127.0.0.1:11211']" %>,
+			'namespace' => '<%= $config->{db}{host}.':'.$config->{db}{database}.':' %>',
+			'compress_threshold' => 10_000,
+		},
+	},
+	'model' => {
+		'schema_class' => 'App::Schema',
+		'connect_info' => {
+			'dsn'      => 'dbi:Pg:dbname=<%= $config->{'db'}->{'database'} %>;host=<%= $config->{'db'}->{'host'} %>;port=<%= $config->{'db'}->{'port'}%>',
+			'user'     => '<%= $config->{'db'}->{'user'} %>',
+			'password' => '<%= $config->{'db'}->{'password'} %>',
+		},
+	},
+
+	'permissions' => {
+	},
+	'recaptha' => {
+		'secret' => '<%= $config->{recaptha}{secret} || '' %>',
+		'key'    => '<%= $config->{recaptha}{key   } || '' %>',
+	},
+
+	'push'     => <%= Data::Dumper->new([$config->{'push'    }    || {}])->Terse(1)->Dump %>,
+	'telegram' => <%= Data::Dumper->new([$config->{'telegram'}    || {}])->Terse(1)->Dump %>,
+};

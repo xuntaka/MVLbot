@@ -1,0 +1,26 @@
+% title 'Смена почты';
+<form role="form" class="form-horizontal" method="post" autocomplete="off">
+  <div class="form-group <%= errors->on('email') ? 'has-error' : '' %>">
+    <label for="inputEmail" class="col-sm-2 control-label">Email</label>
+    <div class="col-sm-4">
+      <input class="form-control" type="text" id="inputEmail" name="email" value="<%= param('email') || user->email %>">
+      % for (errors->first_on('email')) {
+      <span class="help-block"><%= $_ %></span>
+      % }
+    </div>
+  </div>
+  <div class="form-group <%= errors->on('password') ? 'has-error' : '' %>">
+    <label for="inputPassword" class="col-sm-2 control-label">Пароль</label>
+    <div class="col-sm-4">
+      <input class="form-control" type="password" id="inputPassword" name="password">
+      % for (errors->first_on('password')) {
+      <span class="help-block"><%= $_ %></span>
+      % }
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-4">
+      <button type="submit" class="btn btn-primary">Сменить</button>
+    </div>
+  </div>
+</form>

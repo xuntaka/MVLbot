@@ -1,0 +1,12 @@
+#!/bin/sh
+
+% if ($config->{'mode'} eq 'production') {
+% foreach (@{$config->{'services'} || []}) {
+service mvlbot-<%= $_ %> stop
+% }
+% }
+% else {
+if [ -e mvlbot.pid ]; then \\
+	kill -s TERM `cat mvlbot.pid`; \\
+fi
+% }

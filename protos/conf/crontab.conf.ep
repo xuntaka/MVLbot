@@ -1,0 +1,4 @@
+% if (my $mail = $config->{'mail'}->{'cron'} || $config->{'mail'}->{'bcc'}) {
+MAILTO=<%= join ',', grep {s/^ +//;s/ +$//;1} split ',', $mail %>
+
+% }

@@ -1,0 +1,23 @@
+% title 'Состояние проекта';
+
+<div class="row">
+  <div class="col-lg-12">
+    <h4>Perl-модули:</h4>
+    <table class="table table-condensed table-bordered" style="width:auto">
+      <tr>
+        <td><strong>Version</strong></td>
+        <td><strong><%= $App::VERSION; %><% if (is_dev) { %> dev<% } %></strong></td>
+      </tr>
+      % foreach (@$modules) {
+        <tr>
+          <td><%= $_->[0] %></td>
+          <td><%= $_->[1] %></td>
+        </tr>
+      % }
+      <tr>
+        <td>GIT release_version</td>
+        <td><%= config->{release_version} %></td>
+      </tr>
+    </table>
+  </div>
+</div>

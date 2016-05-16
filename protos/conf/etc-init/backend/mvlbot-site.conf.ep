@@ -1,0 +1,16 @@
+description "MVLBot starman"
+author "Egor Baibara <xuntaka@gmail.com>"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+setuid site
+setgid site
+respawn
+
+chdir <%= $approot %>
+env MOJO_MODE=production
+env MOJO_REVERSE_PROXY=1
+#env STARMAN_DEBUG=1
+exec /usr/bin/env perl -Mlocal::lib=<%= $approot %>/local <%= $approot %>/local/bin/starman script/app --listen 127.0.0.1:5000 --workers 32 --min_servers 4 --min_spare_servers 4 --max_spare_servers 16 --log_level 4 --pid <%= $approot %>/log/mvlbot.pid
+# ><%= $approot %>/log/starman.error.log 2>&1

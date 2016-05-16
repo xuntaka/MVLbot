@@ -1,0 +1,28 @@
+% title 'Профиль';
+<form role="form" class="form-horizontal" method="post" autocomplete="off">
+  <div class="form-group">
+    <label for="inputName" class="col-sm-2 control-label">Имя</label>
+    <div class="col-sm-4">
+      <input class="form-control" type="text" id="inputName" name="name" value="<%= user->name %>" autofocus>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputEmail" class="col-sm-2 control-label">Email</label>
+    <div class="col-sm-4">
+      <input class="form-control" type="text" id="inputEmail" value="<%= user->email %>" disabled="disabled">
+      <a class="link-inline" href="<%= url_for 'admin-profile-email' %>">Сменить email</a>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputPassword" class="col-sm-2 control-label">Пароль</label>
+    <div class="col-sm-4">
+      <input class="form-control" type="text" id="inputPassword"  value="********" disabled="disabled">
+      <a class="link-inline" href="<%= url_for 'admin-profile-password' %>">Сменить пароль</a>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-4">
+      <button type="submit" class="btn btn-primary">Сохранить</button>
+    </div>
+  </div>
+</form>

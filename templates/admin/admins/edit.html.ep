@@ -1,0 +1,51 @@
+% title 'Редактирование администратора';
+<form role="form" method="post" class="form-horizontal" autocomplete="off">
+  <legend><%= $user->name %></legend>
+  <div class="form-group <%= errors->on('name') ? 'has-error' : '' %>">
+    <label for="inputName" class="col-sm-2 control-label">Имя</label>
+    <div class="col-sm-4">
+      <input class="form-control" type="text" id="inputName" name="name" value="<%= param('name') || $user->name %>">
+      % for (errors->first_on('name')) {
+      <span class="help-block"><%= $_ %></span>
+      % }
+    </div>
+  </div>
+  <div class="form-group <%= errors->on('email') ? 'has-error' : '' %>">
+    <label for="inputEmail" class="col-sm-2 control-label">Email</label>
+    <div class="col-sm-4">
+      <input class="form-control" type="email" id="inputEmail" name="email" value="<%= param('email') || $user->email %>">
+      % for (errors->first_on('email')) {
+      <span class="help-block"><%= $_ %></span>
+      % }
+    </div>
+  </div>
+  <div class="form-group <%= errors->on('password') ? 'has-error' : '' %>">
+    <label for="inputPassword" class="col-sm-2 control-label">Пароль</label>
+    <div class="col-sm-4">
+      <input class="form-control" type="password" id="inputPassword" name="password">
+      % for (errors->first_on('password')) {
+      <span class="help-block"><%= $_ %></span>
+      % }
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Права</label>
+    <div class="col-sm-4">
+      % my $p = config->{'permissions'};
+      % foreach my $k (sort { $p->{$a} cmp $p->{$b} } keys %$p) {
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" name="permissions" <%= 'checked="checked"' if $user->allow($k) %> value="<%= $k %>">
+          <%= $p->{$k} %>
+        </label>
+      </div>
+      % }
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-4">
+      <button type="submit" class="btn btn-primary">Сохранить</button>
+      <a href="<%= url_for 'admin-admin-delete', 'id' => $user->id %>" class="btn btn-danger" onclick="return confirm('Вы уверены?');">Удалить</a>
+    </div>
+  </div>
+</form>
