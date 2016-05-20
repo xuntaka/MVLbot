@@ -8,7 +8,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Pagetester Scheduler<%= title && ' — ' . title %></title>
+  <title>MVLBot<%= title && ' — ' . title %></title>
 
   <!-- Bootstrap Core CSS -->
   <link href="/s/theme/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">

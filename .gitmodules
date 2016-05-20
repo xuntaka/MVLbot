@@ -1,0 +1,3 @@
+[submodule "sb-admin-2"]
+	path = sb-admin-2
+	url = https://github.com/BlackrockDigital/startbootstrap-sb-admin-2.git

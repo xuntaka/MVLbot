@@ -9,16 +9,6 @@ my $menu = [
     'title'       => '<i class="fa fa-users fa-fw"></i> Администраторы',
     'permissions' => ['admins_edit'],
   },
-  {
-    'url'         => 'admin-steps',
-    'title'       => '<i class="fa fa-chain fa-fw"></i> Шаги заданий',
-    'permissions' => ['steps_edit'],
-  },
-  {
-    'url'         => 'admin-templates',
-    'title'       => '<i class="fa fa-files-o fa-fw"></i> Шаблоны заданий',
-    'permissions' => ['templates_edit'],
-  },
 ];
 %>
 <!DOCTYPE html>
@@ -31,7 +21,7 @@ my $menu = [
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Pagetester Scheduler Admin Interface<%= title && ' — ' . title %></title>
+  <title>MVLBot Admin Interface<%= title && ' — ' . title %></title>
 
   <!-- Bootstrap Core CSS -->
   <link href="/s/theme/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -66,7 +56,7 @@ my $menu = [
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="<%= url_for 'main' %>">Pagetester Scheduler admin interface</a>
+        <a class="navbar-brand" href="<%= url_for 'main' %>">MVLBot admin interface</a>
       </div>
       <!-- /.navbar-header -->
 
