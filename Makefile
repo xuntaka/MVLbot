@@ -21,7 +21,7 @@ logs:
 	@tail -F ${LOGS}/*.log
 
 check:
-	find lib -name '*.pm' -exec perl -I${CURDIR}/lib -c {} \;
+	find lib -name '*.pm' -exec perl -I${CURDIR}/lib -I${CURDIR}/extlib -Mlocal::lib=${CURDIR}/local -c {} \;
 
 test: check
 	@script/app test

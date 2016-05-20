@@ -18,7 +18,11 @@ use FindBin;
 use App::Controller;
 use App::Util;
 
-$Data::Dumper::Indent = 1;
+{
+	$Data::Dumper::Indent = 1; $Data::Dumper::Useqq = 1;
+	no strict 'refs';
+	*{'Data::Dumper::qquote'} = sub {qq{"$_[0]"}}; # вывод русского текста
+}
 
 use DBI::db; # дополняет DBI функциями select и do
 

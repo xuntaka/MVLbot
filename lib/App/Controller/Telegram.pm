@@ -75,6 +75,20 @@ sub webhook {
 	}
 
 	warn Data::Dumper::Dumper($json, $res);
+
+warn 'UID: ', $message->{'from'}->{'id'};
+
+	my $user =
+		$self->M('User')->search('uid' => $message->{'from'}->{'id'})->first ||
+		$self->M('User')->new(
+			'uid'  => $message->{'from'}->{'id'},
+			'name' => $message->{'from'}->{'first_name'} . ' ' .
+			          $message->{'from'}->{'last_name'},
+			'data' => $message,
+		)->store;
+
+warn $user->uid;
+
 	$self->render('json' => $res);
 }
 

@@ -81,6 +81,11 @@ __PACKAGE__->table("users");
   data_type: 'jsonb'
   is_nullable: 1
 
+=head2 uid
+
+  data_type: 'integer'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -112,6 +117,8 @@ __PACKAGE__->add_columns(
   { data_type => "boolean", default_value => \"false", is_nullable => 1 },
   "data",
   { data_type => "jsonb", is_nullable => 1 },
+  "uid",
+  { data_type => "integer", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -141,9 +148,16 @@ __PACKAGE__->set_primary_key("id");
 __PACKAGE__->add_unique_constraint("users_email_key", ["email"]);
 
 
-# Created by DBIx::Class::Schema::Loader v0.07042 @ 2016-05-16 23:02:20
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:gDrdFt5yX5nkxqOhuSTp/w
+# Created by DBIx::Class::Schema::Loader v0.07042 @ 2016-05-16 23:38:41
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:UukP/XSjxqzDCECfwakE7A
 
+__PACKAGE__->load_components('InflateColumn::Serializer');
+
+__PACKAGE__->add_column(
+  '+data' => {
+    serializer_class => 'JSON',
+  }
+);
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
 1;

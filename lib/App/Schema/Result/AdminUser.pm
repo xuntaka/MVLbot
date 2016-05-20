@@ -156,6 +156,13 @@ __PACKAGE__->add_unique_constraint("admin_users_login_key", ["login"]);
 # Created by DBIx::Class::Schema::Loader v0.07042 @ 2016-05-16 23:02:20
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:b7TdW8dguGtKVRmsTeK2eg
 
+__PACKAGE__->load_components('InflateColumn::Serializer');
+
+__PACKAGE__->add_column(
+  '+data' => {
+    serializer_class => 'JSON',
+  }
+);
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
 1;
