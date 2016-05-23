@@ -69,10 +69,13 @@
 			'dsn'      => 'dbi:Pg:dbname=<%= $config->{'db'}->{'database'} %>;host=<%= $config->{'db'}->{'host'} %>;port=<%= $config->{'db'}->{'port'}%>',
 			'user'     => '<%= $config->{'db'}->{'user'} %>',
 			'password' => '<%= $config->{'db'}->{'password'} %>',
+			'pg_enable_utf8'  => 1,
 		},
 	},
 
 	'permissions' => {
+		'admins_edit' => 'Управление администраторами',
+		'chats_edit'  => 'Управление чатами',
 	},
 	'recaptha' => {
 		'secret' => '<%= $config->{recaptha}{secret} || '' %>',
