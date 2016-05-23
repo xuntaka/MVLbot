@@ -13,7 +13,7 @@ sub register {
 	my $json_dumper = JSON->new->allow_nonref->allow_blessed->convert_blessed->canonical->pretty;
 
 	$app->helper('errors'   => sub { shift->errors          });
-	$app->helper('user'     => sub { shift->current_user    });
+	$app->helper('user'     => sub { shift->user            });
 	$app->helper('location' => sub { shift->current_route   });
 	$app->helper('cookie'   => sub { shift->cookie(@_)      });
 

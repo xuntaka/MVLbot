@@ -4,64 +4,25 @@ use Mojo::Base 'App::Controller';
 
 use Mojo::JSON qw(to_json);
 
-sub set_user {
-	my ($self, $chat_id) = @_;
-	my $uid = $self->app->cache->get("telegram_chat:". $chat_id) or return;
-	$self->user_id($uid);
-	my $user = $self->M('User')->get($uid);
-	return $self->user($user);
-}
-
 sub webhook {
 	my $self = shift;
 
-	my $json = $self->req->json;
-
-	$self->app->log->debug($self->dumper($json));
-
-#  {
-#   "message" => {
-#     "chat" => {
-#       "first_name" => "Egor",
-#       "id" => 20987610,
-#       "last_name" => "Baibara",
-#       "type" => "private",
-#       "username" => "xuntaka"
-#     },
-#     "date" => "1462827362",
-#     "entities" => [
-#       {
-#         "length" => 6,
-#         "offset" => 0,
-#         "type" => "bot_command"
-#       }
-#     ],
-#     "from" => {
-#       "first_name" => "Egor",
-#       "id" => 20987610,
-#       "last_name" => "Baibara",
-#       "username" => "xuntaka"
-#     },
-#     "message_id" => 3,
-#     "text" => "/start"
-#   },
-#   "update_id" => 884437478
-# }
-
-
+	my $json = $self->stash('request') || {};
 	my $message = $json->{'message'} || {};
 	my $text = $message->{'text'};
-	# $self->stash('telegram_request' => $json);
-	# $self->stash('chat_id' => $message->{chat}{id});
-	# $self->set_user($message->{chat}{id});
 
 	my $res = {};
 
 	if ($text =~ m{^/([a-z0-9]+)(?:@\S+)?\s*(.*)?$}) {
+		my $commands = $self->L('Commands')
+			->params(
+				'message' => $message,
+				'chat_id' => $message->{'chat'}->{'id'},
+			);
+
 		my ($cmd, $params) = ($1, $2);
-		my $method = "cmd_$cmd";
-		if ($self->can($method)) {
-			$res = $self->$method(split /\s+/, $params);
+		if ($commands->can($cmd)) {
+			$res = $commands->$cmd(split /\s+/, $params);
 		} else {
 			$res = {
 				'method' => 'sendMessage',
@@ -74,42 +35,9 @@ sub webhook {
 		$res->{'chat_id'} = $message->{'chat'}->{'id'},
 	}
 
-	warn Data::Dumper::Dumper($json, $res);
-
-warn 'UID: ', $message->{'from'}->{'id'};
-
-	my $user =
-		$self->M('User')->search('uid' => $message->{'from'}->{'id'})->first ||
-		$self->M('User')->new(
-			'uid'  => $message->{'from'}->{'id'},
-			'name' => $message->{'from'}->{'first_name'} . ' ' .
-			          $message->{'from'}->{'last_name'},
-			'data' => $message,
-		)->store;
-
-warn $user->uid;
+	# warn Data::Dumper::Dumper($json, $res);
 
 	$self->render('json' => $res);
-}
-
-sub cmd_start {
-	my ($self, $key) = @_;
-
-	if ($key) {
-		# my $uid = $self->app->cache->get("telegram_subscribe_key:$key");
-		# if ($uid) {
-		# 	my $chat_id = $self->stash('chat_id');
-		# 	$self->app->cache->set("telegram_chat:$chat_id" => $uid);
-		# 	$self->user_id($uid);
-		# }
-	}
-
-	my $user = undef; #$self->user;
-
-	return {
-		'method' => 'sendMessage',
-		'text'   => 'Привет, ' . ($user ? $user->name : 'Незнакомец') . '!',
-	};
 }
 
 sub cmd_projects {

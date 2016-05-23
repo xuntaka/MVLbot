@@ -50,46 +50,11 @@ sub M { shift->app->M(@_) }
 
 has auth_name  => 'auth';
 
-has user => sub {
-  my $self = shift;
-
-  my $user_id = $self->user_id or return undef;
-
-  my $user = $self->M($self->user_class)->get($user_id);
-
-  if (
-    $user &&
-    $self->session($self->auth_name)->{'token'} ne $user->auth_token
-  ) {
-    $self->app->log->info(
-      'Bad session ' . $self->auth_name . ' token: ' .
-      'ip: ' . $self->get_ip . '; user_id: ' . $user->id
-     );
-
-    $self->session('expires' => 1);
-    return undef;
-  }
-
-  if ($user) {
-	  if ($self->user_class eq 'User') {
-		  $user->ip( $self->get_ip );
-		  $user->ua( $self->get_ua );
-		  $user->store_wo_reload;
-	  }
-	  return $user;
-  }
-
-  $self->session('expires' => 1);
-  return undef;
-};
+has user     => sub { shift->stash('user'    ) };
+has user_id  => sub { shift->stash('user_id' ) };
+has user_uid => sub { shift->stash('user_uid') };
 
 has user_class => 'User';
-
-has user_id => sub {
-  my $self = shift;
-  my $data = $self->session($self->auth_name);
-  return ref $data eq 'HASH' && $data->{'user_id'} || undef;
-};
 
 sub authenticate_user {
   my ($self, $user, %args) = @_;
