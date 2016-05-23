@@ -9,6 +9,11 @@ my $menu = [
     'title'       => '<i class="fa fa-users fa-fw"></i> Администраторы',
     'permissions' => ['admins_edit'],
   },
+  {
+    'url'         => 'admin-chats',
+    'title'       => '<i class="fa fa-webchat fa-fw"></i> Чаты',
+    'permissions' => ['chats_edit'],
+  },
 ];
 %>
 <!DOCTYPE html>

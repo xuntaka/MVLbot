@@ -1,0 +1,26 @@
+% title 'Добавление нового чата';
+<form role="form" method="post" class="form-horizontal" autocomplete="off">
+  <div class="form-group <%= errors->on('name') ? 'has-error' : '' %>">
+    <label for="inputName" class="col-sm-2 control-label">Название</label>
+    <div class="col-sm-4">
+      <input class="form-control" type="text" id="inputName" name="name" value="<%= param('name') %>">
+      % for (errors->first_on('name')) {
+      <span class="help-block"><%= $_ %></span>
+      % }
+    </div>
+  </div>
+  <div class="form-group <%= errors->on('link') ? 'has-error' : '' %>">
+    <label for="inputLink" class="col-sm-2 control-label">Link</label>
+    <div class="col-sm-4">
+      <input class="form-control" type="link" id="inputLink" name="link" value="<%= param('link') %>">
+      % for (errors->first_on('link')) {
+      <span class="help-block"><%= $_ %></span>
+      % }
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-4">
+      <button type="submit" class="btn btn-primary">Добавить</button>
+    </div>
+  </div>
+</form>

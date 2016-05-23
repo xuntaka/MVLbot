@@ -1,0 +1,21 @@
+% title 'Управление чатами';
+% if (@$list) {
+  <table class="table table-hover">
+    <tr>
+      <th>#</th>
+      <th>Название</th>
+      <th>Ссылка</th>
+    </tr>
+%   foreach (@$list) {
+    <tr>
+      <td><a href="<%= url_for 'admin-chat-edit', 'id' => $_->id %>"><%= $_->id %></a></td>
+      <td><%= $_->name %></td>
+      <td><%= $_->link %></td>
+    </tr>
+%   }
+  </table>
+% } else {
+  <p>Нет чатов, бывает.</p>
+% }
+
+<a href="<%= url_for 'admin-chat-add' %>" class="btn btn-primary"><i class="fa fa-plus"></i> Добавить чат</a>

@@ -31,6 +31,12 @@ sub register {
 		$_->route('/user/add'                         )->to('admin-users#add'               )->name('admin-user-add'               );
 		$_->route('/user/:id'                         )->to('admin-users#edit'              )->name('admin-user-edit'              );
 		$_->route('/user/delete/:id'                  )->to('admin-users#delete'            )->name('admin-user-delete'            );
+
+		# Управление чатами
+		$_->route('/chats'               )->to('admin-chats#list'  )->name('admin-chats'      );
+		$_->route('/chat/add'            )->to('admin-chats#add'   )->name('admin-chat-add'   );
+		$_->route('/chat/:id'            )->to('admin-chats#edit'  )->name('admin-chat-edit'  );
+		$_->route('/chat/delete/:id'     )->to('admin-chats#delete')->name('admin-chat-delete');
 	}
 }
 

@@ -66,6 +66,8 @@ has schema => sub {
 		}
 	});
 
+	$schema->storage->dbh->do("set names 'utf8'");
+
 	return $schema;
 };
 
