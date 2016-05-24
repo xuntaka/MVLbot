@@ -11,7 +11,7 @@ my $menu = [
   },
   {
     'url'         => 'admin-chats',
-    'title'       => '<i class="fa fa-webchat fa-fw"></i> Чаты',
+    'title'       => '<i class="fa fa-comments fa-fw"></i> Чаты',
     'permissions' => ['chats_edit'],
   },
 ];
