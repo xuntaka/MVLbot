@@ -59,10 +59,11 @@ sub add {
   my $self = shift;
 
   my $errors = $self->errors;
-  my ($name, $email, $password) =
-    map { $self->param($_) } qw(name email password);
+  my ($login, $name, $email, $password) =
+    map { $self->param($_) } qw(login name email password);
 
   if ($self->is_post) {
+    $errors->add('login'    => 'Логин не может быть пустым'     ) if $login !~ /\S/;
     $errors->add('name'     => 'Имя не может быть пустым'       ) if $name  !~ /\S/;
     $errors->add('email'    => 'Необходимо указать email'       ) if $email !~ /\S/;
     $errors->add('email'    => 'Не корректный email'            ) unless App::Util::is_email($email);
@@ -71,6 +72,7 @@ sub add {
 
     unless ($errors->count) {
       my $user = $self->M('Admin::User')->new(
+        'login'       => $login,
         'name'        => $name,
         'email'       => $email,
         'password'    => $password,
