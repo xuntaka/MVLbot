@@ -9,10 +9,7 @@ sub register {
 	my $r = $app->routes;
 		 $r->namespaces(['App::Controller']);
 
-	for ($r->under->to('auth#logged')) {
-		$_->route('/api/telegram/hook/:token')->to('telegram#webhook')->name('telegram-webhook');
-	}
-
+	$r->route('/api/telegram/hook/:token')->to('telegram#webhook')->name('telegram-webhook');
 }
 
 1;

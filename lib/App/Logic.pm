@@ -81,6 +81,7 @@ sub param {
 
 sub params {
   my $self = shift;
+  return $self->{'__params'} || {} unless @_;
   my $params = @_ ? @_ > 1 ? {@_} : shift : {};
 
   foreach (keys %$params) {
