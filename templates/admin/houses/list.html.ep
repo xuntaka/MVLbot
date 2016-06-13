@@ -1,0 +1,21 @@
+% title 'Управление домами';
+% if (@$list) {
+  <table class="table table-hover">
+    <tr>
+      <th>#</th>
+      <th>Название</th>
+      <th>Тип</th>
+    </tr>
+%   foreach (@$list) {
+    <tr>
+      <td><a href="<%= url_for 'admin-houses', 'pid' => $_->id %>"><%= $_->id %></a></td>
+      <td><%= $_->title %></td>
+      <td><%= $_->type %></td>
+    </tr>
+%   }
+  </table>
+% } else {
+  <p>Нет домов, бывает.</p>
+% }
+
+<a href="<%= url_for 'admin-house-add' %>" class="btn btn-primary"><i class="fa fa-plus"></i> Добавить </a>

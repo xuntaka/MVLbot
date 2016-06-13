@@ -76,6 +76,7 @@
 	'permissions' => {
 		'admins_edit' => 'Управление администраторами',
 		'chats_edit'  => 'Управление чатами',
+		'houses_edit' => 'Управление домами',
 	},
 	'recaptha' => {
 		'secret' => '<%= $config->{recaptha}{secret} || '' %>',

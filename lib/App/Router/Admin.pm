@@ -37,6 +37,12 @@ sub register {
 		$_->route('/chat/add'            )->to('admin-chats#add'   )->name('admin-chat-add'   );
 		$_->route('/chat/:id'            )->to('admin-chats#edit'  )->name('admin-chat-edit'  );
 		$_->route('/chat/delete/:id'     )->to('admin-chats#delete')->name('admin-chat-delete');
+
+		# Управление домом
+		$_->route('/houses/:pid',      'pid' => qr/\d+/)->to('admin-houses#list', 'pid' => 0)->name('admin-houses'      );
+		$_->route('/house/add'                         )->to('admin-houses#add'             )->name('admin-house-add'   );
+		$_->route('/house/:id',        'id'  => qr/\d+/)->to('admin-houses#edit'            )->name('admin-house-edit'  );
+		$_->route('/house/delete/:id', 'id'  => qr/\d+/)->to('admin-houses#delete'          )->name('admin-house-delete');
 	}
 }
 

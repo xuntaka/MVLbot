@@ -14,6 +14,11 @@ my $menu = [
     'title'       => '<i class="fa fa-comments fa-fw"></i> Чаты',
     'permissions' => ['chats_edit'],
   },
+  {
+    'url'         => 'admin-houses',
+    'title'       => '<i class="fa fa-building fa-fw"></i> Дома',
+    'permissions' => ['houses_edit'],
+  },
 ];
 %>
 <!DOCTYPE html>
