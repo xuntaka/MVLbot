@@ -7,21 +7,38 @@ use Mojo::JSON qw(to_json);
 sub webhook {
 	my $self = shift;
 
-	my $json = $self->req->json or return $self->forbidden;
-	my $message = $json->{'message'} || {};
-	my $text = $message->{'text'};
-
 	my $token = $self->config->{'telegram'}->{'hook_token'};
 
-warn $token;
-warn $self->param('token');
+	return $self->forbidden
+		unless $token eq $self->param('token');
 
-
-	if ($token ne $self->param('token')) {
-		return $self->forbidden;
-	}
+	my $json = $self->req->json
+		or return $self->forbidden;
 
 	$self->stash('request' => $json);
+
+	return $self->process_message
+		if $json->{'message'};
+
+	return $self->process_callback
+		if $json->{'callback_query'};
+
+	warn $self->dumper($json);
+
+	$self->render('json' => {
+		'method' => 'sendMessage',
+		'text'   => 'Хм. Я в замешательстве',
+	});
+}
+
+sub process_message {
+	my $self = shift;
+
+	my $json = $self->stash('request');
+
+	my $message = $json->{'message'} || {};
+
+	my $text = $message->{'text'};
 	$self->stash('chat_id' => $message->{'chat'}->{'id'});
 
 	my $user =
@@ -36,9 +53,6 @@ warn $self->param('token');
 	$self->stash('user'     => $user     );
 	$self->stash('user_id'  => $user->id );
 	$self->stash('user_uid' => $user->uid);
-
-
-
 
 	my $res = {};
 
@@ -64,81 +78,66 @@ warn $self->param('token');
 		$res->{'chat_id'} = $message->{'chat'}->{'id'},
 	}
 
-	warn Data::Dumper::Dumper($json, $res);
+	warn $self->dumper($json, $res);
 
 	$self->render('json' => $res);
 }
 
-sub cmd_projects {
+sub process_callback {
 	my $self = shift;
-	my $user = $self->user or return;
 
-	my @projects = sort { $a->name cmp $b->name }
-		@{$self->M('Project')
-			->search('owner_id' => $user->id)
-			->search('block_status' => {'<>' => 'deleted'})
-			->all};
+	my $json = $self->stash('request');
 
-	my $res = {
-		method => 'sendMessage',
-		parse_mode => 'HTML',
-		disable_web_page_preview => 1,
-		text => $self->render_to_string("bots/telegram/projects", format => "html", projects => \@projects),
-	};
+	my $callback = $json->{'callback_query'} || {};
 
-	if (@projects > 0 && @projects < 17) {
-		$res->{reply_markup} = $self->_keyboard([ map { $_->id } @projects ]);
+	my $message = $callback->{'message'} || {};
+
+	my $text = $message->{'text'};
+	$self->stash('chat_id' => $message->{'chat'}->{'id'});
+
+	my $user =
+		$self->M('User')->search('uid' => $callback->{'from'}->{'id'})->first ||
+		$self->M('User')->new(
+			'uid'  => $callback->{'from'}->{'id'},
+			'name' => $callback->{'from'}->{'first_name'} . ' ' .
+			          $callback->{'from'}->{'last_name'},
+			'data' => $callback,
+		)->store;
+
+warn $user;
+
+	$self->stash('user'     => $user     );
+	$self->stash('user_id'  => $user->id );
+	$self->stash('user_uid' => $user->uid);
+
+	my $res = {};
+
+	my $data = $callback->{'data'};
+	if ($data =~ m{^/([a-z0-9]+)(?::\s*(.*)?)?$}) {
+		my $commands = $self->L('Commands')
+			->params(
+				'message' => $message,
+				'chat_id' => $message->{'chat'}->{'id'},
+			);
+
+		my ($cmd, $params) = ($1, $2);
+		if ($commands->can($cmd)) {
+			$res = $commands->$cmd(split /\s+/, $params);
+		} else {
+			$res = {
+				'method' => 'sendMessage',
+				'text'   => 'Команда не найдена',
+			};
+		}
 	}
 
-	return $res;
-}
-
-sub cmd_sites {
-	my $self = shift;
-	my $user = $self->user or return;
-
-	my @sites = sort { $a->name cmp $b->name }
-		@{$self->M('Site')->search({
-			'owner_id'     => $user->id,
-			'is_archived'  => 0,
-			'status'       => {'<>' => 'nobody'},
-		})->all};
-
-	my $res = {
-		method => 'sendMessage',
-		parse_mode => 'HTML',
-		disable_web_page_preview => 1,
-		text => $self->render_to_string('bots/telegram/sites', format => 'html', sites => \@sites),
-	};
-
-	if (@sites > 0 && @sites < 17) {
-		$res->{reply_markup} = $self->_keyboard([ map { $_->id } @sites ]);
+	if ($res->{'method'}) {
+		$res->{'chat_id'} = $message->{'chat'}->{'id'},
 	}
 
-	return $res;
-}
+	warn $self->dumper($json, $res);
 
-sub _keyboard {
-	my ($self, $array, @params) = @_;
-	return unless @$array;
-
-	my $rows = int(sqrt(@$array));
-	$rows = 1 if $rows < 1;
-	$rows = 4 if $rows > 4;
-
-	my @map;
-	while (@$array) {
-		push @map, [ splice @$array, 0, $rows ];
-	}
-
-	return to_json({
-		keyboard => \@map,
-		# resize_keyboard => 1,
-		# one_time_keyboard => 1,
-		# selective => 1,
-		force_reply_keyboard => 1,
-		@params
-	});
+	$self->render('json' => $res);
 }
 
 1;
