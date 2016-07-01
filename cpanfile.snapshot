@@ -1324,6 +1324,15 @@ DISTRIBUTIONS
       Filesys::Notify::Simple 0.12
     requirements:
       ExtUtils::MakeMaker 6.30
+  Geo-Distance-0.20
+    pathname: B/BL/BLUEFEET/Geo-Distance-0.20.tar.gz
+    provides:
+      Geo::Distance 0.20
+    requirements:
+      ExtUtils::MakeMaker 6.30
+      Math::Complex 0
+      Test::Fatal 0.007
+      Test::Simple 0.94
   HTML-Parser-3.72
     pathname: G/GA/GAAS/HTML-Parser-3.72.tar.gz
     provides:
@@ -2764,6 +2773,18 @@ DISTRIBUTIONS
       Test::Harness 2.03
       base 0
       perl 5.006001
+      strict 0
+      warnings 0
+  Test-Fatal-0.014
+    pathname: R/RJ/RJBS/Test-Fatal-0.014.tar.gz
+    provides:
+      Test::Fatal 0.014
+    requirements:
+      Carp 0
+      Exporter 5.57
+      ExtUtils::MakeMaker 0
+      Test::Builder 0
+      Try::Tiny 0.07
       strict 0
       warnings 0
   Test-Harness-3.36

@@ -85,4 +85,6 @@
 
 	'push'     => <%= Data::Dumper->new([$config->{'push'    }    || {}])->Terse(1)->Dump %>,
 	'telegram' => <%= Data::Dumper->new([$config->{'telegram'}    || {}])->Terse(1)->Dump %>,
+
+	'auth_location' => <%= Data::Dumper->new([$config->{'auth_location'} || {}])->Terse(1)->Dump %>,
 };

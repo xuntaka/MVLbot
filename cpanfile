@@ -6,6 +6,7 @@ requires 'DateTime::TimeZone', '1.94';
 requires 'DBIx::Class';
 requires 'DBIx::Class::InflateColumn::Serializer';
 requires 'DBIx::Class::Schema::Loader';
+requires 'Geo::Distance';
 requires 'JSON::XS';
 requires 'JSON::MaybeXS';
 requires 'Lingua::RUS::Number';

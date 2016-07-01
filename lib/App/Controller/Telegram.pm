@@ -56,7 +56,12 @@ sub process_message {
 
 	my $res = {};
 
-	if ($text =~ m{^/([a-z0-9]+)(?:@\S+)?\s*(.*)?$}) {
+	# Если передали локацию, то это авторизация
+	if (!$user->auth && (my $loc = $message->{'location'})) {
+		$res = $self->L('Commands')->auth('location' => $loc);
+	}
+
+	if ($text && $text =~ m{^/([a-z0-9]+)(?:@\S+)?\s*(.*)?$}) {
 		my $commands = $self->L('Commands')
 			->params(
 				'message' => $message,

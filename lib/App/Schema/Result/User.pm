@@ -86,6 +86,11 @@ __PACKAGE__->table("users");
   data_type: 'integer'
   is_nullable: 1
 
+=head2 auth
+
+  data_type: 'boolean'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -119,6 +124,8 @@ __PACKAGE__->add_columns(
   { data_type => "jsonb", is_nullable => 1 },
   "uid",
   { data_type => "integer", is_nullable => 1 },
+  "auth",
+  { data_type => "boolean", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -148,8 +155,8 @@ __PACKAGE__->set_primary_key("id");
 __PACKAGE__->add_unique_constraint("users_email_key", ["email"]);
 
 
-# Created by DBIx::Class::Schema::Loader v0.07042 @ 2016-05-16 23:38:41
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:UukP/XSjxqzDCECfwakE7A
+# Created by DBIx::Class::Schema::Loader v0.07042 @ 2016-07-01 09:55:16
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:yabxfOdA484qsBI/LAjKXA
 
 __PACKAGE__->load_components('InflateColumn::Serializer');
 

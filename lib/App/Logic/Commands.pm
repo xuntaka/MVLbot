@@ -41,11 +41,6 @@ sub start {
 
   my $user = $self->user;
 
-  # return {
-  #   'method' => 'sendMessage',
-  #   'text'   => 'Привет, ' . ($user ? $user->name : 'Незнакомец') . '!',
-  # };
-
   return {
     'method'                   => 'sendMessage',
     'parse_mode'               => 'HTML',
@@ -54,8 +49,66 @@ sub start {
       'telegram/start',
       'format' => 'html',
     ),
+    'reply_markup' => to_json({
+      'keyboard' => [[
+        {'text' => 'Авторизоваться', 'request_location' => JSON::true},
+      ]],
+      'one_time_keyboard' => JSON::true,
+      'resize_keyboard'   => JSON::true,
+    }),
   };
+}
 
+sub auth {
+  my $self = shift;
+  $self->params(@_);
+
+  my $user = $self->user or return undef;
+
+  my $location = $self->param('location');
+
+  use Geo::Distance;
+  my $geo = Geo::Distance->new;
+     $geo->formula('mt');
+
+  my $distance = $geo->distance('meter',
+    $self->config->{'auth_location'}->{'longitude'},
+    $self->config->{'auth_location'}->{'latitude'},
+    $location->{'longitude'},
+    $location->{'latitude'},
+  );
+
+  if ($distance < $self->config->{'auth_location'}->{'distance'}) {
+    $user
+      ->auth(1)
+      ->store;
+  }
+
+  return {
+    'method'                   => 'sendMessage',
+    'parse_mode'               => 'HTML',
+    'disable_web_page_preview' => 1,
+    'text'                     => $self->c->render_to_string(
+      'telegram/auth',
+      'format' => 'html',
+    ),
+    $user->auth ? (
+      'reply_markup' => to_json({
+        'inline_keyboard' => [[
+          {'text' => 'Сообщить свой адрес', 'callback_data' => '/acquaint'},
+        ]],
+
+      }),
+    ) : (
+      'reply_markup' => to_json({
+        'keyboard' => [[
+          {'text' => 'Авторизоваться', 'request_location' => JSON::true},
+        ]],
+        'one_time_keyboard' => JSON::true,
+        'resize_keyboard'   => JSON::true,
+      }),
+    ),
+  };
 }
 
 sub acquaint {
